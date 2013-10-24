@@ -40,7 +40,7 @@ public class RtfDocfmt {
     /**
      * RTF with format string.
      */
-    String rtf;
+    private final String rtf;
 
     /**
      * Initialize this instance with the RTF control word.
@@ -279,5 +279,12 @@ public class RtfDocfmt {
      */
     public static RtfDocfmt revisionMarking() {
         return new RtfDocfmt("\\revisions");
+    }
+
+    /**
+     * RTF with format string.
+     */
+    String getRtf() {
+        return rtf;
     }
 }

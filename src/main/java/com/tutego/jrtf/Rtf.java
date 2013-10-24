@@ -195,7 +195,7 @@ public class Rtf {
     public Rtf header(RtfHeader... headers) {
         for (RtfHeader rtfHeader : headers) {
             if (rtfHeader instanceof RtfHeaderColor) {
-                headerColors.put(((RtfHeaderColor) rtfHeader).colorindex, (RtfHeaderColor) rtfHeader);
+                headerColors.put(((RtfHeaderColor) rtfHeader).getColorindex(), (RtfHeaderColor) rtfHeader);
             } else if (rtfHeader instanceof RtfHeaderFont) {
                 headerFonts.add((RtfHeaderFont) rtfHeader);
             }
@@ -216,7 +216,7 @@ public class Rtf {
      */
     public Rtf info(RtfInfo... infos) {
         for (RtfInfo rtfInfo : infos) {
-            info.append(rtfInfo.rtf);
+            info.append(rtfInfo.getRtf());
         }
 
         return this;
@@ -231,7 +231,7 @@ public class Rtf {
      */
     public Rtf documentFormatting(RtfDocfmt... documentFormattings) {
         for (RtfDocfmt rtfDocfmt : documentFormattings) {
-            docfmt.append(rtfDocfmt.rtf);
+            docfmt.append(rtfDocfmt.getRtf());
         }
 
         return this;
@@ -272,7 +272,7 @@ public class Rtf {
         // First add the style
 
         if (secfmtHdrftr != null) {
-            secfmtHdrftrs.add(secfmtHdrftr.rtf);
+            secfmtHdrftrs.add(secfmtHdrftr.getRtf());
         } else {
             secfmtHdrftrs.add(null);
         }

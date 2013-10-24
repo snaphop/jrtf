@@ -40,7 +40,7 @@ public class RtfHeaderColor extends RtfHeader implements Comparable<RtfHeaderCol
     /**
      * Index of the color.
      */
-    int colorindex;
+    private int colorindex;
     /**
      * Red, Green, Blue.
      */
@@ -97,5 +97,16 @@ public class RtfHeaderColor extends RtfHeader implements Comparable<RtfHeaderCol
                 .append("\\blue")
                 .append(Integer.toString(b))
                 .append(';');
+    }
+
+    /**
+     * Index of the color.
+     */
+    int getColorindex() {
+        return colorindex;
+    }
+
+    void setColorindex(int colorindex) {
+        this.colorindex = colorindex;
     }
 }

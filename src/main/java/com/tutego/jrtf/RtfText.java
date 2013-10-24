@@ -93,8 +93,9 @@ public class RtfText {
      * @return New RtfText object representing this sequence of text.
      */
     public static RtfText textComposite(boolean joinWithSpace, final Object... texts) {
-        if (texts == null || texts.length == 0)
+        if (texts == null || texts.length == 0) {
             return new RtfText("");
+        }
 
         StringBuilder result = new StringBuilder(1024);
         for (int i = 0; i < texts.length; i++) {

@@ -237,8 +237,8 @@ public abstract class RtfPara {
             void rtf(Appendable out, boolean withEndingPar) throws IOException {
                 out.append("{\\trowd\\trautofit1\\intbl\n");
                 for (int i = 1; i <= cells.length; i++) {
-                    out.append(tbldef)
-                            .append((cells[i - 1] instanceof RtfTextPara) ? ((RtfTextPara) cells[i - 1]).cellfmt : "")
+                    out.append(getTbldef())
+                            .append((cells[i - 1] instanceof RtfTextPara) ? ((RtfTextPara) cells[i - 1]).getCellfmt() : "")
                             .append("\\cellx")
                             .append(Integer.toString(i)).append("\n");
                 }

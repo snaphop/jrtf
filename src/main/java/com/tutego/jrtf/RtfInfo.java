@@ -38,7 +38,7 @@ public class RtfInfo {
     /**
      * RTF result of this info.
      */
-    String rtf;
+    private final String rtf;
 
     /**
      * Initializes this object.
@@ -107,5 +107,12 @@ public class RtfInfo {
     public static RtfInfo author(String author) {
         // <author> '{' \author #PCDATA '}'
         return new RtfInfo("{\\author " + Rtf.asRtf(author) + "}");
+    }
+
+    /**
+     * RTF result of this info.
+     */
+    String getRtf() {
+        return rtf;
     }
 }

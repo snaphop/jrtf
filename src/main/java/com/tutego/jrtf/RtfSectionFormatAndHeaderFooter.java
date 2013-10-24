@@ -38,7 +38,7 @@ public class RtfSectionFormatAndHeaderFooter {
     /**
      * Holds the RTF text for a header or footer element.
      */
-    final CharSequence rtf;
+    private final CharSequence rtf;
 
     /**
      * Initializes this object with RTF text.
@@ -279,5 +279,12 @@ public class RtfSectionFormatAndHeaderFooter {
      */
     public static RtfSectionFormatAndHeaderFooter footerOnAllPages(RtfPara para) {
         return new RtfSectionFormatAndHeaderFooter(Rtf.frameRtfParagraphWithEndingPar("footer", para));
+    }
+
+    /**
+     * Holds the RTF text for a header or footer element.
+     */
+    CharSequence getRtf() {
+        return rtf;
     }
 }

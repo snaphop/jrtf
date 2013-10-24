@@ -44,7 +44,7 @@ public abstract class RtfRow extends RtfPara {
     /**
      * Collects the RTF for the table definitions.
      */
-    StringBuilder tbldef = new StringBuilder();
+    private final StringBuilder tbldef = new StringBuilder();
 
     // Row Formatting
 
@@ -180,5 +180,22 @@ public abstract class RtfRow extends RtfPara {
     public RtfRow cellHeight(double height, RtfUnit unit) {
         tbldef.append("\\trrh").append(unit.toTwips(height));
         return this;
+    }
+
+    /**
+     * Collects the RTF for the table definitions.
+     * <p/>
+     * Collects the RTF for the table definitions.
+     * <p/>
+     * Collects the RTF for the table definitions.
+     * <p/>
+     * Collects the RTF for the table definitions.
+     * <p/>
+     * Collects the RTF for the table definitions.
+     */ /**
+     * Collects the RTF for the table definitions.
+     */
+    StringBuilder getTbldef() {
+        return tbldef;
     }
 }

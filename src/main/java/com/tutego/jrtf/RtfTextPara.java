@@ -46,10 +46,11 @@ public abstract class RtfTextPara extends RtfPara {
    *              (\par <para>)?
    */
 
+    //todo change design
     /**
      * Cell formattings. Not private so it can be accessed by RtfPara (bad design anyway).
      */
-    StringBuilder cellfmt = new StringBuilder(32);
+    private StringBuilder cellfmt = new StringBuilder(32);
     /**
      * Paragraph formattings.
      */
@@ -62,6 +63,13 @@ public abstract class RtfTextPara extends RtfPara {
      * Border definitions.
      */
     private StringBuilder brdrdef = new StringBuilder(512);
+
+    /**
+     * Cell formattings. Not private so it can be accessed by RtfPara (bad design anyway).
+     */
+    public StringBuilder getCellfmt() {
+        return cellfmt;
+    }
 
     /**
      * Returns the RTF control words for the <textpar> formattings.
