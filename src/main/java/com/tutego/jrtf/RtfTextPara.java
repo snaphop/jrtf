@@ -47,24 +47,21 @@ public abstract class RtfTextPara extends RtfPara {
    */
 
     /**
+     * Cell formattings. Not private so it can be accessed by RtfPara (bad design anyway).
+     */
+    StringBuilder cellfmt = new StringBuilder(32);
+    /**
      * Paragraph formattings.
      */
     private StringBuilder parfmt = new StringBuilder(512);
-
     /**
      * Tabulator definitions.
      */
     private StringBuilder tabdef = new StringBuilder(512);
-
     /**
      * Border definitions.
      */
     private StringBuilder brdrdef = new StringBuilder(512);
-
-    /**
-     * Cell formattings. Not private so it can be accessed by RtfPara (bad design anyway).
-     */
-    StringBuilder cellfmt = new StringBuilder(32);
 
     /**
      * Returns the RTF control words for the <textpar> formattings.
@@ -167,8 +164,9 @@ public abstract class RtfTextPara extends RtfPara {
      * @return {@code this}-object.
      */
     public RtfTextPara level(int level) {
-        if (level < 0)
+        if (level < 0) {
             throw new IllegalArgumentException("Level is not allowed to be negative but is " + level);
+        }
 
         parfmt.append("\\level").append(level).append('\n');
         return this;
@@ -398,6 +396,198 @@ public abstract class RtfTextPara extends RtfPara {
    */
 
     /**
+     * Defines a tab.
+     *
+     * @param tabPostion Position of the tabulator.
+     * @param unit       Measurement.
+     * @return {@code this}-object.
+     */
+    public RtfTextPara tab(double tabPostion, RtfUnit unit) {
+        return tab(null, null, tabPostion, unit);
+    }
+
+    /**
+     * Defines a tab.
+     *
+     * @param tabKind    What kind of tab. Can be {@code null}.
+     * @param tabPostion Position of the tabulator.
+     * @param unit       Measurement.
+     * @return {@code this}-object.
+     */
+    public RtfTextPara tab(TabKind tabKind, double tabPostion, RtfUnit unit) {
+        return tab(tabKind, null, tabPostion, unit);
+    }
+
+    /**
+     * Defines a tab with an additional tab lead.
+     *
+     * @param tabKind    What kind of tab. Can be {@code null}.
+     * @param tabLead    Leading characters. Can be {@code null}.
+     * @param tabPostion Position of the tabulator.
+     * @param unit       Measurement.
+     * @return {@code this}-object.
+     */
+    public RtfTextPara tab(TabKind tabKind, TabLead tabLead, double tabPostion, RtfUnit unit) {
+        if (tabKind != null && tabKind != TabKind.LEFT) {
+            tabdef.append(tabKind);
+        }
+
+        if (tabLead != null) {
+            tabdef.append(tabLead);
+        }
+
+        tabdef.append("\\tx").append(unit.toTwips(tabPostion)).append('\n');
+        return this;
+    }
+
+    /**
+     * Border top.
+     *
+     * @param borderStyle Style of the border.
+     * @return {@code this}-object.
+     */
+    public RtfTextPara topBorder(BorderStyle borderStyle) {
+        if (borderStyle == null) {
+            throw new IllegalArgumentException("Border style is missing, can't be null");
+        }
+
+        brdrdef.append("\\brdrt").append(borderStyle);
+        return this;
+    }
+
+    /**
+     * Border bottom.
+     *
+     * @param borderStyle Style of the border.
+     * @return {@code this}-object.
+     */
+    public RtfTextPara bottomBorder(BorderStyle borderStyle) {
+        if (borderStyle == null) {
+            throw new IllegalArgumentException("Border style is missing, can't be null");
+        }
+
+        brdrdef.append("\\brdrb").append(borderStyle);
+        return this;
+    }
+
+//  /**
+//   * @param tabPostion Position of the tabulator.
+//   * @param unit Measurement.
+//   * @return {@code this}-object.
+//   */
+//  public RtfTextPara bartab( double tabPostion, RtfUnit unit )
+//  {
+//    return bartab( null, tabPostion, unit );
+//  }
+//
+//  /**
+//   * @param tabLead Leading characters. Can be {@code null}.
+//   * @param tabPostion Position of the tabulator.
+//   * @param unit Measurement.
+//   * @return {@code this}-object.
+//   */
+//  public RtfTextPara bartab( TabLead tabLead, double tabPostion, RtfUnit unit )
+//  {
+//    if ( tabLead != null )
+//      tabdef.append( tabLead );
+//
+//    tabdef.append( "\\tb" ).append( unit.toTwips( tabPostion ) ).append( '\n' );
+//    return this;
+//  }  
+
+    // Borders
+
+    // Paragraph Borders
+  
+  /* 
+   * <brdrdef>  := (<brdrseg> <brdr> )+
+   * <brdrseg>  := \brdrt | \brdrb | \brdrl | \brdrr | \brdrbtw | \brdrbar | \box
+   * <brdr>     := <brdrk> \brdrw? \brsp? \brdrcf?
+   * <brdrk>    := \brdrs | \brdrth | \brdrsh | \brdrdb | \brdrdot | \brdrdash |
+   *               \brdrhair | brdrinset | \brdrdashsm | \brdrdashd | \brdrdashdd |
+   *               \brdrtriple | \brdrtnthsg | \brdrthtnsg | \brdrtnthtnsg |
+   *               \brdrtnthmg | \brdrthtnmg | \brdrtnthtnmg | \brdrtnthlg |
+   *               \brdrthtnlg | \brdrtnthtnlg | \brdrwavy | \brdrwavydb |
+   *               \brdrdashdotstr | \brdremboss | \brdrengrave \brdroutset |
+   *               \brdrnone | \brdrtbl | \brdrnil
+   */
+
+    /**
+     * Border left.
+     *
+     * @param borderStyle Style of the border.
+     * @return {@code this}-object.
+     */
+    public RtfTextPara leftBorder(BorderStyle borderStyle) {
+        if (borderStyle == null) {
+            throw new IllegalArgumentException("Border style is missing, can't be null");
+        }
+
+        brdrdef.append("\\brdrl").append(borderStyle);
+        return this;
+    }
+  
+  /*
+  \brdrdash Dashed border.
+  \brdrhair Hairline border.
+  \brdrinset  Inset border.
+  \brdrdashsm Dashed border (small).
+  \brdrdashd  Dot-dashed border.
+  \brdrdashdd Dot-dot-dashed border.
+  \brdroutset Outset border.
+  \brdrtriple Triple border.
+  \brdrtnthsg Thick-thin border (small).
+  \brdrthtnsg Thin-thick border (small).
+  \brdrtnthtnsg Thin-thick thin border (small).
+  \brdrtnthmg Thick-thin border (medium).
+  \brdrthtnmg Thin-thick border (medium).
+  \brdrtnthtnmg Thin-thick thin border (medium).
+  \brdrtnthlg Thick-thin border (large).
+  \brdrthtnlg Thin-thick border (large).
+  \brdrtnthtnlg Thin-thick-thin border (large).
+  \brdrwavy Wavy border.
+  \brdrwavydb Double wavy border.
+  \brdrdashdotstr Striped border.
+  \brdremboss Embossed border.
+  \brdrengrave  Engraved border.
+  \brdrframe  Border resembles a "Frame."
+  \brdrwN N is the width in twips of the pen used to draw the paragraph border line. N cannot be greater than 75. To obtain a larger border width, the \brdth control word can be used to obtain a width double that of N.
+  \brdrcfN  N is the color of the paragraph border, specified as an index into the color table in the RTF header. 
+  \brspN  Space in twips between borders and the paragraph.
+  \brdrnil  No border specified.
+   */
+
+    /**
+     * Border right.
+     *
+     * @param borderStyle Style of the border.
+     * @return {@code this}-object.
+     */
+    public RtfTextPara rightBorder(BorderStyle borderStyle) {
+        if (borderStyle == null) {
+            throw new IllegalArgumentException("Border style is missing, can't be null");
+        }
+
+        brdrdef.append("\\brdrr").append(borderStyle);
+        return this;
+    }
+
+    /**
+     * Sets the width of a cell if the paragraph is used in a table.
+     *
+     * @param width Width of the cell.
+     * @param unit  Unit of the width.
+     * @return {@code this}-object.
+     */
+    public RtfTextPara cellWidth(double width, RtfUnit unit) {
+        cellfmt.append("\\clftsWidth3\\clwWidth")
+                .append(unit.toTwips(Math.abs(width)))
+                .append('\n');
+
+        return this;
+    }
+
+    /**
      * Different kind of tabs.
      */
     public enum TabKind {
@@ -493,91 +683,6 @@ public abstract class RtfTextPara extends RtfPara {
     }
 
     /**
-     * Defines a tab.
-     *
-     * @param tabPostion Position of the tabulator.
-     * @param unit       Measurement.
-     * @return {@code this}-object.
-     */
-    public RtfTextPara tab(double tabPostion, RtfUnit unit) {
-        return tab(null, null, tabPostion, unit);
-    }
-
-    /**
-     * Defines a tab.
-     *
-     * @param tabKind    What kind of tab. Can be {@code null}.
-     * @param tabPostion Position of the tabulator.
-     * @param unit       Measurement.
-     * @return {@code this}-object.
-     */
-    public RtfTextPara tab(TabKind tabKind, double tabPostion, RtfUnit unit) {
-        return tab(tabKind, null, tabPostion, unit);
-    }
-
-    /**
-     * Defines a tab with an additional tab lead.
-     *
-     * @param tabKind    What kind of tab. Can be {@code null}.
-     * @param tabLead    Leading characters. Can be {@code null}.
-     * @param tabPostion Position of the tabulator.
-     * @param unit       Measurement.
-     * @return {@code this}-object.
-     */
-    public RtfTextPara tab(TabKind tabKind, TabLead tabLead, double tabPostion, RtfUnit unit) {
-        if (tabKind != null && tabKind != TabKind.LEFT)
-            tabdef.append(tabKind);
-
-        if (tabLead != null)
-            tabdef.append(tabLead);
-
-        tabdef.append("\\tx").append(unit.toTwips(tabPostion)).append('\n');
-        return this;
-    }
-
-//  /**
-//   * @param tabPostion Position of the tabulator.
-//   * @param unit Measurement.
-//   * @return {@code this}-object.
-//   */
-//  public RtfTextPara bartab( double tabPostion, RtfUnit unit )
-//  {
-//    return bartab( null, tabPostion, unit );
-//  }
-//
-//  /**
-//   * @param tabLead Leading characters. Can be {@code null}.
-//   * @param tabPostion Position of the tabulator.
-//   * @param unit Measurement.
-//   * @return {@code this}-object.
-//   */
-//  public RtfTextPara bartab( TabLead tabLead, double tabPostion, RtfUnit unit )
-//  {
-//    if ( tabLead != null )
-//      tabdef.append( tabLead );
-//
-//    tabdef.append( "\\tb" ).append( unit.toTwips( tabPostion ) ).append( '\n' );
-//    return this;
-//  }  
-
-    // Borders
-
-    // Paragraph Borders
-  
-  /* 
-   * <brdrdef>  := (<brdrseg> <brdr> )+
-   * <brdrseg>  := \brdrt | \brdrb | \brdrl | \brdrr | \brdrbtw | \brdrbar | \box
-   * <brdr>     := <brdrk> \brdrw? \brsp? \brdrcf?
-   * <brdrk>    := \brdrs | \brdrth | \brdrsh | \brdrdb | \brdrdot | \brdrdash |
-   *               \brdrhair | brdrinset | \brdrdashsm | \brdrdashd | \brdrdashdd |
-   *               \brdrtriple | \brdrtnthsg | \brdrthtnsg | \brdrtnthtnsg |
-   *               \brdrtnthmg | \brdrthtnmg | \brdrtnthtnmg | \brdrtnthlg |
-   *               \brdrthtnlg | \brdrtnthtnlg | \brdrwavy | \brdrwavydb |
-   *               \brdrdashdotstr | \brdremboss | \brdrengrave \brdroutset |
-   *               \brdrnone | \brdrtbl | \brdrnil
-   */
-
-    /**
      * Enumerator for different border styles.
      */
     public enum BorderStyle {
@@ -630,106 +735,5 @@ public abstract class RtfTextPara extends RtfPara {
                 return "\\\brdrdot";
             }
         },
-    }
-  
-  /*
-  \brdrdash Dashed border.
-  \brdrhair Hairline border.
-  \brdrinset  Inset border.
-  \brdrdashsm Dashed border (small).
-  \brdrdashd  Dot-dashed border.
-  \brdrdashdd Dot-dot-dashed border.
-  \brdroutset Outset border.
-  \brdrtriple Triple border.
-  \brdrtnthsg Thick-thin border (small).
-  \brdrthtnsg Thin-thick border (small).
-  \brdrtnthtnsg Thin-thick thin border (small).
-  \brdrtnthmg Thick-thin border (medium).
-  \brdrthtnmg Thin-thick border (medium).
-  \brdrtnthtnmg Thin-thick thin border (medium).
-  \brdrtnthlg Thick-thin border (large).
-  \brdrthtnlg Thin-thick border (large).
-  \brdrtnthtnlg Thin-thick-thin border (large).
-  \brdrwavy Wavy border.
-  \brdrwavydb Double wavy border.
-  \brdrdashdotstr Striped border.
-  \brdremboss Embossed border.
-  \brdrengrave  Engraved border.
-  \brdrframe  Border resembles a "Frame."
-  \brdrwN N is the width in twips of the pen used to draw the paragraph border line. N cannot be greater than 75. To obtain a larger border width, the \brdth control word can be used to obtain a width double that of N.
-  \brdrcfN  N is the color of the paragraph border, specified as an index into the color table in the RTF header. 
-  \brspN  Space in twips between borders and the paragraph.
-  \brdrnil  No border specified.
-   */
-
-    /**
-     * Border top.
-     *
-     * @param borderStyle Style of the border.
-     * @return {@code this}-object.
-     */
-    public RtfTextPara topBorder(BorderStyle borderStyle) {
-        if (borderStyle == null)
-            throw new IllegalArgumentException("Border style is missing, can't be null");
-
-        brdrdef.append("\\brdrt").append(borderStyle);
-        return this;
-    }
-
-    /**
-     * Border bottom.
-     *
-     * @param borderStyle Style of the border.
-     * @return {@code this}-object.
-     */
-    public RtfTextPara bottomBorder(BorderStyle borderStyle) {
-        if (borderStyle == null)
-            throw new IllegalArgumentException("Border style is missing, can't be null");
-
-        brdrdef.append("\\brdrb").append(borderStyle);
-        return this;
-    }
-
-    /**
-     * Border left.
-     *
-     * @param borderStyle Style of the border.
-     * @return {@code this}-object.
-     */
-    public RtfTextPara leftBorder(BorderStyle borderStyle) {
-        if (borderStyle == null)
-            throw new IllegalArgumentException("Border style is missing, can't be null");
-
-        brdrdef.append("\\brdrl").append(borderStyle);
-        return this;
-    }
-
-    /**
-     * Border right.
-     *
-     * @param borderStyle Style of the border.
-     * @return {@code this}-object.
-     */
-    public RtfTextPara rightBorder(BorderStyle borderStyle) {
-        if (borderStyle == null)
-            throw new IllegalArgumentException("Border style is missing, can't be null");
-
-        brdrdef.append("\\brdrr").append(borderStyle);
-        return this;
-    }
-
-    /**
-     * Sets the width of a cell if the paragraph is used in a table.
-     *
-     * @param width Width of the cell.
-     * @param unit  Unit of the width.
-     * @return {@code this}-object.
-     */
-    public RtfTextPara cellWidth(double width, RtfUnit unit) {
-        cellfmt.append("\\clftsWidth3\\clwWidth")
-                .append(unit.toTwips(Math.abs(width)))
-                .append('\n');
-
-        return this;
     }
 }

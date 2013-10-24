@@ -38,44 +38,39 @@ import java.io.InputStream;
  * Represents an image which can be added to an RTF document.
  */
 public class RtfPicture {
-    /**
-     * The image type of the picture. Usually AUTOMATIC does the job.
-     */
-    public enum PictureType {
-        /**
-         * Type of the image will be figures out automatially.
-         */
-        AUTOMATIC,
-
-        /**
-         * Image type is JPG.
-         */
-        JPG {
-            @Override
-            public String toString() {
-                return "\\jpegblip";
-            }
-        },
-
-        /**
-         * Image type is PNG.
-         */
-        PNG {
-            @Override
-            public String toString() {
-                return "\\pngblip";
-            }
-        },
-//    EMF  {@Override public String toString() { return "\\emfblip"; } },
-//    WMF  {@Override public String toString() { return "\\wmetafile"; } },
-//    BMP  {@Override public String toString() { return "\\wbitmap0"; } },
-    }
-
     private final StringBuilder hexPicData = new StringBuilder(4096);
-//  private final StringBuilder firstImageBytes = new StringBuilder( 20 );
-
     private int widthInTwips = -1, heightInTwips = -1;
+    //  private final StringBuilder firstImageBytes = new StringBuilder( 20 );
     private int scaleX = -1, scaleY = -1;
+
+    /**
+     * Reads an image and hex encode it.
+     *
+     * @param source Source of the image.
+     */
+    RtfPicture(InputStream source) throws IOException {
+        if (source == null) {
+            throw new IllegalArgumentException("Image source can't be null");
+        }
+
+        // Optimize it! Stream the data
+        // This is just my lazy version to easily figure out the image type
+
+        int pos = 1;
+        for (int b; (b = source.read()) != -1; ) {
+            String hexString = Integer.toHexString(b);
+            if (hexString.length() == 1) {
+                hexPicData.append('0').append(hexString);
+            } else {
+                hexPicData.append(hexString);
+            }
+
+            if (pos++ == 40) {
+                pos = 1;
+                hexPicData.append('\n');
+            }
+        }
+    }
 
   /*
    * <pict>         : = '{' \pict
@@ -105,33 +100,6 @@ public class RtfPicture {
    * <metafileinfo> := \picbmp & \picbpp
    * <data>         := ( \bin #BDATA) | #SDATA
    */
-
-    /**
-     * Reads an image and hex encode it.
-     *
-     * @param source Source of the image.
-     */
-    RtfPicture(InputStream source) throws IOException {
-        if (source == null)
-            throw new IllegalArgumentException("Image source can't be null");
-
-        // Optimize it! Stream the data
-        // This is just my lazy version to easily figure out the image type
-
-        int pos = 1;
-        for (int b; (b = source.read()) != -1; ) {
-            String hexString = Integer.toHexString(b);
-            if (hexString.length() == 1)
-                hexPicData.append('0').append(hexString);
-            else
-                hexPicData.append(hexString);
-
-            if (pos++ == 40) {
-                pos = 1;
-                hexPicData.append('\n');
-            }
-        }
-    }
 
     /**
      * Width of the image.
@@ -239,10 +207,11 @@ public class RtfPicture {
                     char char8 = (char) Integer.parseInt(hexChar8, 16);
                     char char9 = (char) Integer.parseInt(hexChar9, 16);
 
-                    if (char6 == 'J' && char7 == 'F' && char8 == 'I' && char9 == 'F')
+                    if (char6 == 'J' && char7 == 'F' && char8 == 'I' && char9 == 'F') {
                         out.append(PictureType.JPG.toString());
-                    else if (char1 == 'P' && char2 == 'N' && char3 == 'G')
+                    } else if (char1 == 'P' && char2 == 'N' && char3 == 'G') {
                         out.append(PictureType.PNG.toString());
+                    }
 //         else if ( char0 == 'B' && char1 == 'M' )
 //           out.append( PictureType.BMP.toString() );
 
@@ -252,20 +221,26 @@ public class RtfPicture {
           * \wbmwidthbytesN
           */
 
-                    else
+                    else {
                         throw new RtfException("Unsupported image type");
-                } else
+                    }
+                } else {
                     out.append(pictureType.toString());
+                }
 
-                if (widthInTwips != -1)
+                if (widthInTwips != -1) {
                     out.append("\\picwgoal").append(Integer.toString(widthInTwips));
-                if (heightInTwips != -1)
+                }
+                if (heightInTwips != -1) {
                     out.append("\\pichgoal").append(Integer.toString(heightInTwips));
+                }
 
-                if (scaleX != -1)
+                if (scaleX != -1) {
                     out.append("\\picscalex").append(Integer.toString(scaleX));
-                if (scaleY != -1)
+                }
+                if (scaleY != -1) {
                     out.append("\\picscaley").append(Integer.toString(scaleY));
+                }
 
                 out.append('\n');
                 out.append(hexPicData);
@@ -273,5 +248,38 @@ public class RtfPicture {
                 out.append('}');
             }
         };
+    }
+
+    /**
+     * The image type of the picture. Usually AUTOMATIC does the job.
+     */
+    public enum PictureType {
+        /**
+         * Type of the image will be figures out automatially.
+         */
+        AUTOMATIC,
+
+        /**
+         * Image type is JPG.
+         */
+        JPG {
+            @Override
+            public String toString() {
+                return "\\jpegblip";
+            }
+        },
+
+        /**
+         * Image type is PNG.
+         */
+        PNG {
+            @Override
+            public String toString() {
+                return "\\pngblip";
+            }
+        },
+//    EMF  {@Override public String toString() { return "\\emfblip"; } },
+//    WMF  {@Override public String toString() { return "\\wmetafile"; } },
+//    BMP  {@Override public String toString() { return "\\wbitmap0"; } },
     }
 }

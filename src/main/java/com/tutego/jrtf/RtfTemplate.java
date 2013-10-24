@@ -89,12 +89,13 @@ public class RtfTemplate {
         } catch (IOException e) {
             throw new RtfException(e);
         } finally {
-            if (reader != null)
+            if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
                     throw new RtfException(e);
                 }
+            }
         }
     }
 
@@ -139,8 +140,9 @@ public class RtfTemplate {
      * @return RTF document after variable substitution.
      */
     public String out() {
-        if (map.isEmpty())
+        if (map.isEmpty()) {
             return template.toString();
+        }
 
         StringBuffer result = new StringBuffer(template.length());
         Matcher matcher = variablePattern.matcher(template);
@@ -148,8 +150,9 @@ public class RtfTemplate {
         while (matcher.find()) {
             Object value = map.get(matcher.group(1));
 
-            if (value == null)
+            if (value == null) {
                 continue;
+            }
 
             StringBuilder sb = new StringBuilder(128);
             try {

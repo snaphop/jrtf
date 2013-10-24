@@ -62,8 +62,9 @@ public class RtfSectionFormatAndHeaderFooter {
      */
     public static RtfSectionFormatAndHeaderFooter sectionFormatting(RtfSectionFormatAndHeaderFooter... sectionFormats) {
         StringBuilder sb = new StringBuilder(sectionFormats.length * 10);
-        for (RtfSectionFormatAndHeaderFooter rtfSectionFormat : sectionFormats)
+        for (RtfSectionFormatAndHeaderFooter rtfSectionFormat : sectionFormats) {
             sb.append(rtfSectionFormat.rtf);
+        }
 
         return new RtfSectionFormatAndHeaderFooter(sb);
     }
@@ -142,8 +143,9 @@ public class RtfSectionFormatAndHeaderFooter {
      * @return New {@code RtfSectionFormatAndHeaderFooter} object.
      */
     public static RtfSectionFormatAndHeaderFooter columns(int columns) {
-        if (columns <= 0)
+        if (columns <= 0) {
             throw new RtfException("Number of colums can't be <= 0");
+        }
 
         return new RtfSectionFormatAndHeaderFooter("\\cols" + columns);
     }

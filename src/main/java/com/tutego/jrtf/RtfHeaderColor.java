@@ -38,14 +38,13 @@ import java.io.IOException;
  */
 public class RtfHeaderColor extends RtfHeader implements Comparable<RtfHeaderColor> {
     /**
-     * Red, Green, Blue.
-     */
-    private int r, g, b;
-
-    /**
      * Index of the color.
      */
     int colorindex;
+    /**
+     * Red, Green, Blue.
+     */
+    private int r, g, b;
 
     /**
      * Package visible constructor. The user will not instantiate this class.
@@ -68,8 +67,9 @@ public class RtfHeaderColor extends RtfHeader implements Comparable<RtfHeaderCol
      * @return {@link RtfHeader}
      */
     public RtfHeader at(int colorindex) {
-        if (colorindex < 0 || colorindex > 255)
+        if (colorindex < 0 || colorindex > 255) {
             throw new RtfException("Color index " + colorindex + " ist out of range, has to be between 0 and 255");
+        }
 
         this.colorindex = colorindex;
 

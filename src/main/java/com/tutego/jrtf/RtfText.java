@@ -64,16 +64,6 @@ public class RtfText {
     }
 
     /**
-     * Writes the RTF of this RtfText object to the output.
-     *
-     * @param out Appendable.
-     * @throws IOException
-     */
-    void rtf(Appendable out) throws IOException {
-        out.append(rtf);
-    }
-
-    /**
      * Converts every object in the sequence with {@code toString} to a
      * String object and wraps it into a RtfText if its not already a
      * RtfText object.
@@ -88,8 +78,6 @@ public class RtfText {
     public static RtfText text(Object... texts) {
         return textComposite(false, texts);
     }
-
-// TODO: Fix 'The method text(Object[]) is ambiguous for the type RtfDocumentDemo'
 
     /**
      * Converts every object in the sequence with {@code toString} to a
@@ -110,26 +98,34 @@ public class RtfText {
 
         StringBuilder result = new StringBuilder(1024);
         for (int i = 0; i < texts.length; i++) {
-            if (texts[i] == null)
+            if (texts[i] == null) {
                 continue;
+            }
 
-            if (joinWithSpace)
+            if (joinWithSpace) {
                 if (i > 0 && texts[i - 1] != null)  // if preceding element is null, no space
+                {
                     result.append(' ');
+                }
+            }
 
             try {
-                if (texts[i] instanceof RtfText)
+                if (texts[i] instanceof RtfText) {
                     ((RtfText) texts[i]).rtf(result);
-                else if (texts[i] instanceof RtfPara)  // check more
+                } else if (texts[i] instanceof RtfPara)  // check more
+                {
                     throw new RtfException("RtfPara in method text() is not allowed. There is no sensible toString() method declared");
-                else
+                } else {
                     Rtf.asRtf(result, texts[i].toString());
+                }
             } catch (IOException e) {
                 throw new RtfException(e);
             }
         }
         return new RtfText(result);
     }
+
+// TODO: Fix 'The method text(Object[]) is ambiguous for the type RtfDocumentDemo'
 
     /**
      * Wraps a String in a {@link RtfText} object.
@@ -139,8 +135,9 @@ public class RtfText {
      * @return New RtfText object representing this text.
      */
     public static RtfText text(String text) {
-        if (text == null)
+        if (text == null) {
             text = "";
+        }
 
         return new RtfText(Rtf.asRtf(text));
     }
@@ -325,13 +322,30 @@ public class RtfText {
      * @return New RtfText object representing this text.
      */
     public static RtfText fontSize(int fontSize, Object text) {
-        if (fontSize < 0)
+        if (fontSize < 0) {
             throw new IllegalArgumentException("Font size can't be negative");
+        }
 
         RtfText rtfText = text(text);
 
         StringBuilder sb = new StringBuilder(rtfText.rtf.length() + 10);
         sb.append("{\\fs").append(fontSize)
+                .append(' ').append(rtfText.rtf).append('}');
+
+        return new RtfText(sb);
+    }
+
+    /**
+     * Colors text.
+     *
+     * @param colorindex Index of the color set defined in the header.
+     * @param text       Text to color.
+     * @return New RtfText object representing this text.
+     */
+    public static RtfText color(int colorindex, Object text) {
+        RtfText rtfText = text(text);
+        StringBuilder sb = new StringBuilder(rtfText.rtf.length() + 10);
+        sb.append("{\\cf").append(colorindex)
                 .append(' ').append(rtfText.rtf).append('}');
 
         return new RtfText(sb);
@@ -354,24 +368,17 @@ public class RtfText {
      * @param text       Text to color.
      * @return New RtfText object representing this text.
      */
-    public static RtfText color(int colorindex, Object text) {
-        RtfText rtfText = text(text);
-        StringBuilder sb = new StringBuilder(rtfText.rtf.length() + 10);
-        sb.append("{\\cf").append(colorindex)
-                .append(' ').append(rtfText.rtf).append('}');
-
-        return new RtfText(sb);
+    public static RtfText color(int colorindex, String text) {
+        return color(colorindex, text(text));
     }
 
     /**
-     * Colors text.
+     * Current date. Useful in headers.
      *
-     * @param colorindex Index of the color set defined in the header.
-     * @param text       Text to color.
-     * @return New RtfText object representing this text.
+     * @return New RtfText object representing this current date.
      */
-    public static RtfText color(int colorindex, String text) {
-        return color(colorindex, text(text));
+    public static RtfText currentDate() {
+        return new RtfText("\\chdate\n");
     }
 
     //public static RtfText color( int colorindex1, int colorindex2, RtfText element )
@@ -387,15 +394,6 @@ public class RtfText {
 
     // Special Characters
     // <spec>
-
-    /**
-     * Current date. Useful in headers.
-     *
-     * @return New RtfText object representing this current date.
-     */
-    public static RtfText currentDate() {
-        return new RtfText("\\chdate\n");
-    }
 
     /**
      * Current date in long format. Useful in headers
@@ -600,8 +598,6 @@ public class RtfText {
         return new RtfText("\\~\n");
     }
 
-    // <pict>
-
     /**
      * Place a picture.
      *
@@ -615,6 +611,8 @@ public class RtfText {
             throw new RtfException(e);
         }
     }
+
+    // <pict>
 
     /**
      * Place a picture.
@@ -630,8 +628,6 @@ public class RtfText {
         }
     }
 
-    // <foot>  '{' \footnote <para>+ '}'
-
     /**
      * Place a footnote with automatic footnote reference.
      *
@@ -643,12 +639,15 @@ public class RtfText {
             @Override
             void rtf(Appendable out) throws IOException {
                 out.append("\\chftn{\\footnote{\\up6\\chftn }");
-                for (RtfPara rtfPara : paras)
+                for (RtfPara rtfPara : paras) {
                     rtfPara.rtf(out, false);
+                }
                 out.append("}\n");
             }
         };
     }
+
+    // <foot>  '{' \footnote <para>+ '}'
 
     /**
      * Place a footnote with automatic footnote reference.
@@ -660,7 +659,95 @@ public class RtfText {
         return footnote(RtfPara.p(para));
     }
 
+    /**
+     * Inserts a RTF field.
+     *
+     * @param fieldInstructions Field instructions.
+     * @param recentResult      Recent results of this field.
+     * @param fieldModifier     Additional field modifier. Can be {@code null}.
+     * @return New RtfText object representing this field.
+     */
+    public static RtfText field(final RtfPara fieldInstructions, final RtfPara recentResult, final FieldModifier fieldModifier) {
+        if (fieldInstructions == null) {
+            throw new IllegalArgumentException("Field instructions are missing");
+        }
+
+        return new RtfText(null) {
+            @Override
+            void rtf(Appendable out) throws IOException {
+        /*
+         * <field>     := '{' \field <fieldmod>? <fieldinst> <fieldrslt> '}'
+         * <fieldmod>  := \flddirty? & \fldedit? & \fldlock? & \fldpriv?
+         * <fieldinst> := '{\*' \fldinst <para>+ <fldalt>? '}'
+         * <fldalt>    := \fldalt
+         * <fieldrslt> := '{' \fldrslt <para>+ '}'
+         */
+
+                out.append("{\\field");
+
+                if (fieldModifier != null) {
+                    out.append(fieldModifier.toString());
+                }
+
+                out.append("{\\*\\fldinst ");
+                fieldInstructions.rtf(out, false);
+                out.append("}{\\fldrslt ");
+
+                if (recentResult != null) {
+                    recentResult.rtf(out, false);
+                }
+
+                out.append("}}");
+            }
+
+            ;
+        };
+    }
+
     // Fields
+
+    /**
+     * Inserts a RTF field.
+     *
+     * @param fieldInstructions Field instructions.
+     * @param recentResult      Recent results of this field.
+     * @return New RtfText object representing this field.
+     */
+    public static RtfText field(RtfPara fieldInstructions, RtfPara recentResult) {
+        return field(fieldInstructions, recentResult, null);
+    }
+
+    /**
+     * Adds an hyperlink (aka anchor). This is a special field.
+     *
+     * @param url  URL of this hyperlink.
+     * @param text Text for this hyperlink.
+     * @return New RtfText object representing this hyperlink.
+     */
+    public static RtfText hyperlink(String url, RtfPara text) {
+        try {
+            StringBuilder sb = new StringBuilder(256);
+            sb.append("{\\field{\\*\\fldinst{HYPERLINK \"")
+                    .append(Rtf.asRtf(url))
+                    .append("\"}}{\\fldrslt{\\ul ");
+            text.rtf(sb, false);
+            sb.append("}}}");
+
+            return new RtfText(sb);
+        } catch (IOException e) {
+            throw new RtfException(e);
+        }
+    }
+
+    /**
+     * Writes the RTF of this RtfText object to the output.
+     *
+     * @param out Appendable.
+     * @throws IOException
+     */
+    void rtf(Appendable out) throws IOException {
+        out.append(rtf);
+    }
 
     /**
      * Modifiers for fields.
@@ -705,81 +792,6 @@ public class RtfText {
             public String toString() {
                 return "\\fldpriv";
             }
-        }
-    }
-
-    /**
-     * Inserts a RTF field.
-     *
-     * @param fieldInstructions Field instructions.
-     * @param recentResult      Recent results of this field.
-     * @param fieldModifier     Additional field modifier. Can be {@code null}.
-     * @return New RtfText object representing this field.
-     */
-    public static RtfText field(final RtfPara fieldInstructions, final RtfPara recentResult, final FieldModifier fieldModifier) {
-        if (fieldInstructions == null)
-            throw new IllegalArgumentException("Field instructions are missing");
-
-        return new RtfText(null) {
-            @Override
-            void rtf(Appendable out) throws IOException {
-        /*
-         * <field>     := '{' \field <fieldmod>? <fieldinst> <fieldrslt> '}'
-         * <fieldmod>  := \flddirty? & \fldedit? & \fldlock? & \fldpriv?
-         * <fieldinst> := '{\*' \fldinst <para>+ <fldalt>? '}'
-         * <fldalt>    := \fldalt
-         * <fieldrslt> := '{' \fldrslt <para>+ '}'
-         */
-
-                out.append("{\\field");
-
-                if (fieldModifier != null)
-                    out.append(fieldModifier.toString());
-
-                out.append("{\\*\\fldinst ");
-                fieldInstructions.rtf(out, false);
-                out.append("}{\\fldrslt ");
-
-                if (recentResult != null)
-                    recentResult.rtf(out, false);
-
-                out.append("}}");
-            }
-
-            ;
-        };
-    }
-
-    /**
-     * Inserts a RTF field.
-     *
-     * @param fieldInstructions Field instructions.
-     * @param recentResult      Recent results of this field.
-     * @return New RtfText object representing this field.
-     */
-    public static RtfText field(RtfPara fieldInstructions, RtfPara recentResult) {
-        return field(fieldInstructions, recentResult, null);
-    }
-
-    /**
-     * Adds an hyperlink (aka anchor). This is a special field.
-     *
-     * @param url  URL of this hyperlink.
-     * @param text Text for this hyperlink.
-     * @return New RtfText object representing this hyperlink.
-     */
-    public static RtfText hyperlink(String url, RtfPara text) {
-        try {
-            StringBuilder sb = new StringBuilder(256);
-            sb.append("{\\field{\\*\\fldinst{HYPERLINK \"")
-                    .append(Rtf.asRtf(url))
-                    .append("\"}}{\\fldrslt{\\ul ");
-            text.rtf(sb, false);
-            sb.append("}}}");
-
-            return new RtfText(sb);
-        } catch (IOException e) {
-            throw new RtfException(e);
         }
     }
 }

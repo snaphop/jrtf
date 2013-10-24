@@ -41,36 +41,152 @@ public class RtfHeaderFont extends RtfHeader {
      * Constant for Courier font.
      */
     public static final String COURIER = "Courier";
-
     /**
      * Constant for Helvetica (Arial) font.
      */
     public static final String HELVETICA = "Arial";
-
     /**
      * Constant for Courier font.
      */
     public static final String ARIAL = "Arial";
-
     /**
      * Constant for Symbol font.
      */
     public static final String SYMBOL = "Symbol";
-
     /**
      * Constant for Times font.
      */
     public static final String TIMES_ROMAN = "Times New Roman";
-
     /**
      * Constant for Zapf Dingbats (Windings) font.
      */
     public static final String ZAPFDINGBATS = "Windings";
-
     /**
      * Constant for Windings font.
      */
     public static final String WINDINGS = "Windings";
+    /**
+     * Font number of a font in the header.
+     */
+    private int fontnum;
+    /**
+     * Name of the font.
+     */
+    private String fontname;
+    /**
+     * Font family.
+     */
+    private FontFamily fontfamily = FontFamily.NIL;
+    /**
+     * Char set of this font.
+     */
+    private CharSet charSet = CharSet.ANSI;
+    /**
+     * Pitch of this font.
+     */
+    private Pitch pitch;
+
+    /**
+     * Package visible constructor. The user will not instantiate this class.
+     *
+     * @param fontname
+     */
+    RtfHeaderFont(String fontname) {
+        this.fontname = fontname;
+    }
+
+    /**
+     * Sets the font family.
+     *
+     * @param fontfamily Font family.
+     * @return {@code this}-object.
+     */
+    public RtfHeaderFont family(FontFamily fontfamily) {
+        if (fontfamily == null) {
+            throw new IllegalArgumentException("Font family can't be null");
+        }
+
+        this.fontfamily = fontfamily;
+        return this;
+    }
+
+    /**
+     * Sets the char set.
+     *
+     * @param charSet Char set.
+     * @return {@code this}-object.
+     */
+    public RtfHeaderFont charset(CharSet charSet) {
+        if (charSet == null) {
+            throw new IllegalArgumentException("Char set can't be null");
+        }
+
+        this.charSet = charSet;
+        return this;
+    }
+
+    /**
+     * Sets the pitch.
+     *
+     * @param pitch Pitch of this font.
+     * @return {@code this}-object.
+     */
+    public RtfHeaderFont pitch(Pitch pitch) {
+        if (pitch == null) {
+            throw new IllegalArgumentException("Pitch can't be null");
+        }
+
+        this.pitch = pitch;
+        return this;
+    }
+
+    /**
+     * Sets the number of this fonts in the header and finishes the header font definition.
+     *
+     * @param fontnum Number of the font.
+     * @return {@link RtfHeader}.
+     */
+    public RtfHeader at(int fontnum) {
+        if (fontnum < 0) {
+            throw new IllegalArgumentException("Font number is not allowed to be negative");
+        }
+
+        this.fontnum = fontnum;
+        return this;
+    }
+
+    /**
+     * Writes out the RTF definition for a font.
+     *
+     * @param out
+     * @throws IOException
+     */
+    void writeFontInfo(Appendable out) throws IOException {
+    /*
+     * <fontinfo> := <fontnum>
+     *               <fontfamily>
+     *               <fcharset>?
+     *               <fprq>?
+     *               <panose>?
+     *               <nontaggedname>?
+     *               <fontemb>?
+     *               <codepage>?
+     *               <fontname>
+     *               <fontaltname>? ';'
+     *
+     * <fontnum>    := \f
+     * <fontfamily> := \fnil | \froman | \fswiss | \fmodern | \fscript | \fdecor | \ftech | \fbidi
+     * <fcharset>   := \fcharset
+     * <fprq>       := \fprq
+     * <fontname>   := #PCDATA
+     */
+
+        out.append("{\\f").append(Integer.toString(fontnum))
+                .append("\\f").append(fontfamily.toString().toLowerCase())
+                .append((charSet != null ? "\\fcharset" + charSet : ""))
+                .append((pitch != null ? "\\fprq" + pitch : ""))
+                .append(" ").append(fontname).append(";}");
+    }
 
     /**
      * RTF font families.
@@ -368,128 +484,5 @@ public class RtfHeaderFont extends RtfHeader {
                 return "2";
             }
         },
-    }
-
-    /**
-     * Font number of a font in the header.
-     */
-    private int fontnum;
-
-    /**
-     * Name of the font.
-     */
-    private String fontname;
-
-    /**
-     * Font family.
-     */
-    private FontFamily fontfamily = FontFamily.NIL;
-
-    /**
-     * Char set of this font.
-     */
-    private CharSet charSet = CharSet.ANSI;
-
-    /**
-     * Pitch of this font.
-     */
-    private Pitch pitch;
-
-    /**
-     * Package visible constructor. The user will not instantiate this class.
-     *
-     * @param fontname
-     */
-    RtfHeaderFont(String fontname) {
-        this.fontname = fontname;
-    }
-
-    /**
-     * Sets the font family.
-     *
-     * @param fontfamily Font family.
-     * @return {@code this}-object.
-     */
-    public RtfHeaderFont family(FontFamily fontfamily) {
-        if (fontfamily == null)
-            throw new IllegalArgumentException("Font family can't be null");
-
-        this.fontfamily = fontfamily;
-        return this;
-    }
-
-    /**
-     * Sets the char set.
-     *
-     * @param charSet Char set.
-     * @return {@code this}-object.
-     */
-    public RtfHeaderFont charset(CharSet charSet) {
-        if (charSet == null)
-            throw new IllegalArgumentException("Char set can't be null");
-
-        this.charSet = charSet;
-        return this;
-    }
-
-    /**
-     * Sets the pitch.
-     *
-     * @param pitch Pitch of this font.
-     * @return {@code this}-object.
-     */
-    public RtfHeaderFont pitch(Pitch pitch) {
-        if (pitch == null)
-            throw new IllegalArgumentException("Pitch can't be null");
-
-        this.pitch = pitch;
-        return this;
-    }
-
-    /**
-     * Sets the number of this fonts in the header and finishes the header font definition.
-     *
-     * @param fontnum Number of the font.
-     * @return {@link RtfHeader}.
-     */
-    public RtfHeader at(int fontnum) {
-        if (fontnum < 0)
-            throw new IllegalArgumentException("Font number is not allowed to be negative");
-
-        this.fontnum = fontnum;
-        return this;
-    }
-
-    /**
-     * Writes out the RTF definition for a font.
-     *
-     * @param out
-     * @throws IOException
-     */
-    void writeFontInfo(Appendable out) throws IOException {
-    /*
-     * <fontinfo> := <fontnum>
-     *               <fontfamily>
-     *               <fcharset>?
-     *               <fprq>?
-     *               <panose>?
-     *               <nontaggedname>?
-     *               <fontemb>?
-     *               <codepage>?
-     *               <fontname>
-     *               <fontaltname>? ';'
-     *               
-     * <fontnum>    := \f
-     * <fontfamily> := \fnil | \froman | \fswiss | \fmodern | \fscript | \fdecor | \ftech | \fbidi
-     * <fcharset>   := \fcharset
-     * <fprq>       := \fprq
-     * <fontname>   := #PCDATA
-     */
-
-        out.append("{\\f").append(Integer.toString(fontnum))
-                .append("\\f").append(fontfamily.toString().toLowerCase())
-                .append((charSet != null ? "\\fcharset" + charSet : ""))
-                .append((pitch != null ? "\\fprq" + pitch : ""))
-                .append(" ").append(fontname).append(";}");
     }
 }

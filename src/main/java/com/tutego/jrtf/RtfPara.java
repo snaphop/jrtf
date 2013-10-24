@@ -59,14 +59,6 @@ public abstract class RtfPara {
      */
 
     /**
-     * Writes out pure RTF of this paragraph into an {@link Appendable}.
-     *
-     * @param out           Output.
-     * @param withEndingPar Output will write an \par at the end.
-     */
-    abstract void rtf(Appendable out, boolean withEndingPar) throws IOException;
-
-    /**
      * Builds a paragraph of objects (with will be converted to Strings) and RtfText.
      * Convenience method for {@code p(RtfText.text(texts))}.
      *
@@ -87,23 +79,27 @@ public abstract class RtfPara {
      * @return New {@code RtfTextPara} object with text.
      */
     public static RtfTextPara p(final RtfText... texts) {
-        if (texts == null || texts.length == 0)
+        if (texts == null || texts.length == 0) {
             return new RtfTextPara() {
                 @Override
                 void rtf(Appendable out, boolean withEndingPar) throws IOException {
                     out.append("\\par");
                 }
             };
+        }
 
         return new RtfTextPara() {
             @Override
             void rtf(Appendable out, boolean withEndingPar) throws IOException {
                 out.append("{"); // \\pard
                 out.append(textparFormatRtf());
-                for (RtfText rtfText : texts)
+                for (RtfText rtfText : texts) {
                     rtfText.rtf(out);
+                }
                 if (withEndingPar)     // if its in table, withEndingPar will be false
+                {
                     out.append("\\par");
+                }
                 out.append("}\n");
             }
         };
@@ -119,23 +115,27 @@ public abstract class RtfPara {
      * @return New {@code RtfTextPara} object with text.
      */
     public static RtfTextPara pard(final RtfText... texts) {
-        if (texts == null || texts.length == 0)
+        if (texts == null || texts.length == 0) {
             return new RtfTextPara() {
                 @Override
                 void rtf(Appendable out, boolean withEndingPar) throws IOException {
                     out.append("\\pard\\par");
                 }
             };
+        }
 
         return new RtfTextPara() {
             @Override
             void rtf(Appendable out, boolean withEndingPar) throws IOException {
                 out.append("{\\pard");
                 out.append(textparFormatRtf());
-                for (RtfText rtfText : texts)
+                for (RtfText rtfText : texts) {
                     rtfText.rtf(out);
+                }
                 if (withEndingPar)     // if its in table, withEndingPar will be false
+                {
                     out.append("\\par");
+                }
                 out.append("}\n");
             }
         };
@@ -177,12 +177,14 @@ public abstract class RtfPara {
      * @return New row object.
      */
     public static RtfRow row(RtfText... cells) {
-        if (cells == null)
+        if (cells == null) {
             throw new RtfException("There has to be at least one cell in a row");
+        }
 
         List<RtfPara> paras = new ArrayList<RtfPara>();
-        for (RtfText cell : cells)
+        for (RtfText cell : cells) {
             paras.add(p(cell));
+        }
 
         RtfPara[] parasArray = new RtfPara[paras.size()];
         return row(paras.toArray(parasArray));
@@ -197,15 +199,17 @@ public abstract class RtfPara {
      * @return New row object.
      */
     public static RtfRow row(Object... cells) {
-        if (cells == null)
+        if (cells == null) {
             throw new RtfException("There has to be at least one cell in a row");
+        }
 
         List<RtfPara> paras = new ArrayList<RtfPara>();
         for (Object cell : cells) {
-            if (cell instanceof RtfPara)
+            if (cell instanceof RtfPara) {
                 paras.add((RtfPara) cell);
-            else
+            } else {
                 paras.add(p(cell));
+            }
         }
 
         RtfPara[] parasArray = new RtfPara[paras.size()];
@@ -221,21 +225,23 @@ public abstract class RtfPara {
     public static RtfRow row(final RtfPara... cells) {
     /* <row>    := <tbldef> <cell>+ \row
      * <cell>   := <textpar>+ \cell
-     * 
+     *
      * <tbldef> := \trowd \trgaph <rowjust>? & <rowwrite>? & \trleft? \trheader? & \trkeep? <celldef>+
      */
-        if (cells == null)
+        if (cells == null) {
             throw new RtfException("There has to be at least one cell in a row");
+        }
 
         return new RtfRow() {
             @Override
             void rtf(Appendable out, boolean withEndingPar) throws IOException {
                 out.append("{\\trowd\\trautofit1\\intbl\n");
-                for (int i = 1; i <= cells.length; i++)
+                for (int i = 1; i <= cells.length; i++) {
                     out.append(tbldef)
                             .append((cells[i - 1] instanceof RtfTextPara) ? ((RtfTextPara) cells[i - 1]).cellfmt : "")
                             .append("\\cellx")
                             .append(Integer.toString(i)).append("\n");
+                }
 
                 for (RtfPara cell : cells) {
                     cell.rtf(out, false);
@@ -245,4 +251,12 @@ public abstract class RtfPara {
             }
         };
     }
+
+    /**
+     * Writes out pure RTF of this paragraph into an {@link Appendable}.
+     *
+     * @param out           Output.
+     * @param withEndingPar Output will write an \par at the end.
+     */
+    abstract void rtf(Appendable out, boolean withEndingPar) throws IOException;
 }
