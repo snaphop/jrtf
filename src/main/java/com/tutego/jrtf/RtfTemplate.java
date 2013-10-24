@@ -56,10 +56,6 @@ public class RtfTemplate {
      */
     private final Pattern variablePattern;
     /**
-     * charset name for read and write streams*
-     */
-    private final String charsetName;
-    /**
      * Holds the template file.
      */
     private StringBuilder template = new StringBuilder(DEFAULT_CAPACITY);
@@ -74,12 +70,10 @@ public class RtfTemplate {
      *
      * @param inputStream
      * @param pattern     regex pattern for inject
-     * @param charsetName
      */
-    RtfTemplate(InputStream inputStream, String pattern, String charsetName) {
+    RtfTemplate(InputStream inputStream, String pattern) {
         variablePattern = Pattern.compile(pattern,
                 Pattern.DOTALL | Pattern.MULTILINE);
-        this.charsetName = charsetName;
 
         Reader reader = null;
         try {
@@ -87,7 +81,7 @@ public class RtfTemplate {
                 inputStream = new BufferedInputStream(inputStream);
             }
 
-            reader = new InputStreamReader(inputStream, charsetName);
+            reader = new InputStreamReader(inputStream, Rtf.CHARSET1252);
 
             for (int c; (c = reader.read()) != -1; ) {
                 template.append((char) c);
@@ -111,7 +105,7 @@ public class RtfTemplate {
      * @param inputStream
      */
     RtfTemplate(InputStream inputStream) {
-        this(inputStream, "%%(\\S+)%%", Rtf.CHARSET1252);
+        this(inputStream, "%%(\\S+)%%");
     }
 
     /**
@@ -181,7 +175,7 @@ public class RtfTemplate {
     public void out(OutputStream out) {
         try {
             String out2 = out();
-            out.write(out2.getBytes(charsetName));
+            out.write(out2.getBytes(Rtf.CHARSET1252));
         } catch (IOException e) {
             throw new RtfException(e);
         } finally {

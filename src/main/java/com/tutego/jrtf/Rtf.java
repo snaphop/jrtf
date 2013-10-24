@@ -163,11 +163,10 @@ public class Rtf {
      *
      * @param inputStream Source of the RTF file.
      * @param pattern     regex pattern for inject
-     * @param charsetName charset name for read and write
      * @return Template object to make the substitutions on.
      */
-    public static RtfTemplate template(InputStream inputStream, String pattern, String charsetName) {
-        return new RtfTemplate(inputStream, pattern, charsetName);
+    public static RtfTemplate template(InputStream inputStream, String pattern) {
+        return new RtfTemplate(inputStream, pattern);
     }
 
     /**
