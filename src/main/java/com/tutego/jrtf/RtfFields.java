@@ -68,9 +68,8 @@ public class RtfFields {
      * @return {@link RtfText} which represents a field with time.
      */
     public static RtfText timeField(String format) {
-        format = "time \\@ \"" + format + "\"";
 
-        return field(format);
+        return field("time \\@ \"" + format + "\"");
     }
 
     /**

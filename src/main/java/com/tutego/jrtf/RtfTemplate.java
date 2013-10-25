@@ -77,11 +77,8 @@ public class RtfTemplate {
 
         Reader reader = null;
         try {
-            if (!(inputStream instanceof BufferedInputStream)) {
-                inputStream = new BufferedInputStream(inputStream);
-            }
 
-            reader = new InputStreamReader(inputStream, Rtf.CHARSET1252);
+            reader = new InputStreamReader(bufferedStreamWrapper(inputStream), Rtf.CHARSET1252);
 
             for (int c; (c = reader.read()) != -1; ) {
                 template.append((char) c);
@@ -107,6 +104,20 @@ public class RtfTemplate {
      */
     RtfTemplate(InputStream inputStream) {
         this(inputStream, "%%(\\S+)%%");
+    }
+
+    /**
+     * BufferedInputStream wrapper for inputStream
+     *
+     * @param inputStream stream for wrapping
+     * @return wrapped stream
+     */
+    private static BufferedInputStream bufferedStreamWrapper(InputStream inputStream) {
+        if (inputStream instanceof BufferedInputStream) {
+            return (BufferedInputStream) inputStream;
+        } else {
+            return new BufferedInputStream(inputStream);
+        }
     }
 
     /**

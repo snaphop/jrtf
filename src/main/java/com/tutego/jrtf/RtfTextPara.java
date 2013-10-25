@@ -317,9 +317,8 @@ public abstract class RtfTextPara extends RtfPara {
      * @return {@code this}-object.
      */
     public RtfTextPara spaceBetweenLines(double space, RtfUnit unit) {
-        space = Math.abs(space);
 
-        parfmt.append("\\sl").append(unit.toTwips(space)).append('\n');
+        parfmt.append("\\sl").append(unit.toTwips(Math.abs(space))).append('\n');
         return this;
     }
 
@@ -333,9 +332,8 @@ public abstract class RtfTextPara extends RtfPara {
      * @see #spaceBetweenLines(double, RtfUnit)
      */
     public RtfTextPara spaceBetweenLinesMultipleAtLeastOrExactly(double space, RtfUnit unit) {
-        space = Math.abs(space);
 
-        parfmt.append("\\sl").append(unit.toTwips(space)).append("\\slmult0\n");
+        parfmt.append("\\sl").append(unit.toTwips(Math.abs(space))).append("\\slmult0\n");
         return this;
     }
 
@@ -349,9 +347,8 @@ public abstract class RtfTextPara extends RtfPara {
      * @see #spaceBetweenLines(double, RtfUnit)
      */
     public RtfTextPara spaceBetweenLinesMultiple(double space, RtfUnit unit) {
-        space = Math.abs(space);
 
-        parfmt.append("\\sl").append(unit.toTwips(space)).append("\\slmult1\n");
+        parfmt.append("\\sl").append(unit.toTwips(Math.abs(space))).append("\\slmult1\n");
         return this;
     }
 

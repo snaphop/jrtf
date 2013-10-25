@@ -136,11 +136,7 @@ public class RtfText {
      * @return New RtfText object representing this text.
      */
     public static RtfText text(String text) {
-        if (text == null) {
-            text = "";
-        }
-
-        return new RtfText(Rtf.asRtf(text));
+        return new RtfText(Rtf.asRtf(text == null ? "" : text));
     }
 
     /**
