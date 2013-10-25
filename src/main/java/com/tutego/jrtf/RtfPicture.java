@@ -181,73 +181,7 @@ public class RtfPicture {
      * @return RtfText.
      */
     public RtfText type(final PictureType pictureType) {
-        return new RtfText(null) {
-            @Override
-            void rtf(Appendable out) throws IOException {
-                out.append("{\\pict");
-
-                if (pictureType == PictureType.AUTOMATIC) {
-                    // Find out the picture type by poking in the first bytes
-
-//         String hexChar0 = hexPicData.substring( 0, 0+2 );
-                    String hexChar1 = hexPicData.substring(1 * 2, 1 * 2 + 2);
-                    String hexChar2 = hexPicData.substring(2 * 2, 2 * 2 + 2);
-                    String hexChar3 = hexPicData.substring(3 * 2, 3 * 2 + 2);
-                    String hexChar6 = hexPicData.substring(6 * 2, 6 * 2 + 2);
-                    String hexChar7 = hexPicData.substring(7 * 2, 7 * 2 + 2);
-                    String hexChar8 = hexPicData.substring(8 * 2, 8 * 2 + 2);
-                    String hexChar9 = hexPicData.substring(9 * 2, 9 * 2 + 2);
-
-//         char char0 = (char) Integer.parseInt( hexChar0, 16 );
-                    char char1 = (char) Integer.parseInt(hexChar1, 16);
-                    char char2 = (char) Integer.parseInt(hexChar2, 16);
-                    char char3 = (char) Integer.parseInt(hexChar3, 16);
-                    char char6 = (char) Integer.parseInt(hexChar6, 16);
-                    char char7 = (char) Integer.parseInt(hexChar7, 16);
-                    char char8 = (char) Integer.parseInt(hexChar8, 16);
-                    char char9 = (char) Integer.parseInt(hexChar9, 16);
-
-                    if (char6 == 'J' && char7 == 'F' && char8 == 'I' && char9 == 'F') {
-                        out.append(PictureType.JPG.toString());
-                    } else if (char1 == 'P' && char2 == 'N' && char3 == 'G') {
-                        out.append(PictureType.PNG.toString());
-                    }
-//         else if ( char0 == 'B' && char1 == 'M' )
-//           out.append( PictureType.BMP.toString() );
-
-         /* For BNP with have to figure out and write
-          * \wbmbitspixelN
-          * \wbmplanesN
-          * \wbmwidthbytesN
-          */
-
-                    else {
-                        throw new RtfException("Unsupported image type");
-                    }
-                } else {
-                    out.append(pictureType.toString());
-                }
-
-                if (widthInTwips != -1) {
-                    out.append("\\picwgoal").append(Integer.toString(widthInTwips));
-                }
-                if (heightInTwips != -1) {
-                    out.append("\\pichgoal").append(Integer.toString(heightInTwips));
-                }
-
-                if (scaleX != -1) {
-                    out.append("\\picscalex").append(Integer.toString(scaleX));
-                }
-                if (scaleY != -1) {
-                    out.append("\\picscaley").append(Integer.toString(scaleY));
-                }
-
-                out.append('\n');
-                out.append(hexPicData);
-
-                out.append('}');
-            }
-        };
+        return new PictureAsRtfText(pictureType);
     }
 
     /**
@@ -281,5 +215,80 @@ public class RtfPicture {
 //    EMF  {@Override public String toString() { return "\\emfblip"; } },
 //    WMF  {@Override public String toString() { return "\\wmetafile"; } },
 //    BMP  {@Override public String toString() { return "\\wbitmap0"; } },
+    }
+
+    private class PictureAsRtfText extends RtfText {
+        private final PictureType pictureType;
+
+        public PictureAsRtfText(PictureType pictureType) {
+            super(null);
+            this.pictureType = pictureType;
+        }
+
+        @Override
+        void rtf(Appendable out) throws IOException {
+            out.append("{\\pict");
+
+            if (pictureType == PictureType.AUTOMATIC) {
+                // Find out the picture type by poking in the first bytes
+
+//         String hexChar0 = hexPicData.substring( 0, 0+2 );
+                String hexChar1 = hexPicData.substring(1 * 2, 1 * 2 + 2);
+                String hexChar2 = hexPicData.substring(2 * 2, 2 * 2 + 2);
+                String hexChar3 = hexPicData.substring(3 * 2, 3 * 2 + 2);
+                String hexChar6 = hexPicData.substring(6 * 2, 6 * 2 + 2);
+                String hexChar7 = hexPicData.substring(7 * 2, 7 * 2 + 2);
+                String hexChar8 = hexPicData.substring(8 * 2, 8 * 2 + 2);
+                String hexChar9 = hexPicData.substring(9 * 2, 9 * 2 + 2);
+
+//         char char0 = (char) Integer.parseInt( hexChar0, 16 );
+                char char1 = (char) Integer.parseInt(hexChar1, 16);
+                char char2 = (char) Integer.parseInt(hexChar2, 16);
+                char char3 = (char) Integer.parseInt(hexChar3, 16);
+                char char6 = (char) Integer.parseInt(hexChar6, 16);
+                char char7 = (char) Integer.parseInt(hexChar7, 16);
+                char char8 = (char) Integer.parseInt(hexChar8, 16);
+                char char9 = (char) Integer.parseInt(hexChar9, 16);
+
+                if (char6 == 'J' && char7 == 'F' && char8 == 'I' && char9 == 'F') {
+                    out.append(PictureType.JPG.toString());
+                } else if (char1 == 'P' && char2 == 'N' && char3 == 'G') {
+                    out.append(PictureType.PNG.toString());
+                }
+//         else if ( char0 == 'B' && char1 == 'M' )
+//           out.append( PictureType.BMP.toString() );
+
+     /* For BNP with have to figure out and write
+      * \wbmbitspixelN
+      * \wbmplanesN
+      * \wbmwidthbytesN
+      */
+
+                else {
+                    throw new RtfException("Unsupported image type");
+                }
+            } else {
+                out.append(pictureType.toString());
+            }
+
+            if (widthInTwips != -1) {
+                out.append("\\picwgoal").append(Integer.toString(widthInTwips));
+            }
+            if (heightInTwips != -1) {
+                out.append("\\pichgoal").append(Integer.toString(heightInTwips));
+            }
+
+            if (scaleX != -1) {
+                out.append("\\picscalex").append(Integer.toString(scaleX));
+            }
+            if (scaleY != -1) {
+                out.append("\\picscaley").append(Integer.toString(scaleY));
+            }
+
+            out.append('\n');
+            out.append(hexPicData);
+
+            out.append('}');
+        }
     }
 }
