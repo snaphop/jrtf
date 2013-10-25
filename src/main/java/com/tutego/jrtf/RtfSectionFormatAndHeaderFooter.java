@@ -34,7 +34,7 @@ package com.tutego.jrtf;
 /**
  * Section-Formatting.
  */
-public class RtfSectionFormatAndHeaderFooter {
+public final class RtfSectionFormatAndHeaderFooter {
     /**
      * Holds the RTF text for a header or footer element.
      */

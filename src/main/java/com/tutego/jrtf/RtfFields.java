@@ -34,7 +34,7 @@ package com.tutego.jrtf;
 /**
  * Utility methods around the method {@link RtfText#field(RtfPara, RtfPara)}.
  */
-public class RtfFields {
+public final class RtfFields {
     /**
      * Private constructor. The user will not instantiate this class.
      */

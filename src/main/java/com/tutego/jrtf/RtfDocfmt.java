@@ -34,7 +34,7 @@ package com.tutego.jrtf;
 /**
  * Instances represent document format like page width, margins.
  */
-public class RtfDocfmt {
+public final class RtfDocfmt {
   /* <document> := <info>? <docfmt>* <section>+ */
 
     /**

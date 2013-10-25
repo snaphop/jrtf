@@ -34,7 +34,7 @@ package com.tutego.jrtf;
 /**
  * Represents meta information about the RTF document like author, title, keywords.
  */
-public class RtfInfo {
+public final class RtfInfo {
     /**
      * RTF result of this info.
      */

@@ -45,7 +45,7 @@ import java.util.*;
  * Rtf.rtf().p( "Hello", bold("RTF") ).out( new FileWriter("out.rtf") );
  * </pre>
  */
-public class Rtf {
+public final class Rtf {
     /**
      * Charset used for converting chars in the range of 127 < x < 255.
      */
