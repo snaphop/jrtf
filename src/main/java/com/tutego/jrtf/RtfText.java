@@ -99,7 +99,8 @@ public class RtfText {
 
         StringBuilder result = new StringBuilder(1024);
         for (int i = 0; i < texts.length; i++) {
-            if (texts[i] == null) {
+            final Object text = texts[i];
+            if (text == null) {
                 continue;
             }
 
@@ -110,20 +111,24 @@ public class RtfText {
                 }
             }
 
-            try {
-                if (texts[i] instanceof RtfText) {
-                    ((RtfText) texts[i]).rtf(result);
-                } else if (texts[i] instanceof RtfPara)  // check more
-                {
-                    throw new RtfException("RtfPara in method text() is not allowed. There is no sensible toString() method declared");
-                } else {
-                    Rtf.asRtf(result, texts[i].toString());
-                }
-            } catch (IOException e) {
-                throw new RtfException(e);
-            }
+            textInternal(result, text);
         }
         return new RtfText(result);
+    }
+
+    private static void textInternal(StringBuilder result, Object text) {
+        try {
+            if (text instanceof RtfText) {
+                ((RtfText) text).rtf(result);
+            } else if (text instanceof RtfPara)  // check more
+            {
+                throw new RtfException("RtfPara in method text() is not allowed. There is no sensible toString() method declared");
+            } else {
+                Rtf.asRtf(result, text.toString());
+            }
+        } catch (IOException e) {
+            throw new RtfException(e);
+        }
     }
 
 // TODO: Fix 'The method text(Object[]) is ambiguous for the type RtfDocumentDemo'

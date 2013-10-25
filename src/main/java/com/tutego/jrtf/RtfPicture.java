@@ -250,13 +250,13 @@ public class RtfPicture {
                 String hexChar9 = hexPicData.substring(9 * 2, 9 * 2 + 2);
 
 //         char char0 = (char) Integer.parseInt( hexChar0, 16 );
-                char char1 = (char) Integer.parseInt(hexChar1, 16);
-                char char2 = (char) Integer.parseInt(hexChar2, 16);
-                char char3 = (char) Integer.parseInt(hexChar3, 16);
-                char char6 = (char) Integer.parseInt(hexChar6, 16);
-                char char7 = (char) Integer.parseInt(hexChar7, 16);
-                char char8 = (char) Integer.parseInt(hexChar8, 16);
-                char char9 = (char) Integer.parseInt(hexChar9, 16);
+                char char1 = calcChar(hexChar1);
+                char char2 = calcChar(hexChar2);
+                char char3 = calcChar(hexChar3);
+                char char6 = calcChar(hexChar6);
+                char char7 = calcChar(hexChar7);
+                char char8 = calcChar(hexChar8);
+                char char9 = calcChar(hexChar9);
 
                 if (char6 == 'J' && char7 == 'F' && char8 == 'I' && char9 == 'F') {
                     out.append(PictureType.JPG.toString());
@@ -279,24 +279,25 @@ public class RtfPicture {
                 out.append(pictureType.toString());
             }
 
-            if (widthInTwips != -1) {
-                out.append("\\picwgoal").append(Integer.toString(widthInTwips));
-            }
-            if (heightInTwips != -1) {
-                out.append("\\pichgoal").append(Integer.toString(heightInTwips));
-            }
-
-            if (scaleX != -1) {
-                out.append("\\picscalex").append(Integer.toString(scaleX));
-            }
-            if (scaleY != -1) {
-                out.append("\\picscaley").append(Integer.toString(scaleY));
-            }
+            append(out, widthInTwips, "\\picwgoal");
+            append(out, heightInTwips, "\\pichgoal");
+            append(out, scaleX, "\\picscalex");
+            append(out, scaleY, "\\picscaley");
 
             out.append('\n');
             out.append(hexPicData);
 
             out.append('}');
+        }
+
+        private char calcChar(String hexChar) {
+            return (char) Integer.parseInt(hexChar, 16);
+        }
+
+        private void append(Appendable out, int value, String cmd) throws IOException {
+            if (value != -1) {
+                out.append(cmd).append(Integer.toString(scaleY));
+            }
         }
     }
 }
