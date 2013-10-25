@@ -53,23 +53,31 @@ public class RtfPicture {
             throw new IllegalArgumentException("Image source can't be null");
         }
 
-        // Optimize it! Stream the data
+        // todo Optimize it! Stream the data
         // This is just my lazy version to easily figure out the image type
 
         int pos = 1;
-        for (int b; (b = source.read()) != -1; ) {
-            String hexString = Integer.toHexString(b);
-            if (hexString.length() == 1) {
-                hexPicData.append('0').append(hexString);
-            } else {
-                hexPicData.append(hexString);
+
+        int bd;
+        do {
+            bd = source.read();
+
+            if (bd != -1) {
+                String hexString = Integer.toHexString(bd);
+                if (hexString.length() == 1) {
+                    hexPicData.append('0').append(hexString);
+                } else {
+                    hexPicData.append(hexString);
+                }
+
+                if (pos++ == 40) {
+                    pos = 1;
+                    hexPicData.append('\n');
+                }
             }
 
-            if (pos++ == 40) {
-                pos = 1;
-                hexPicData.append('\n');
-            }
-        }
+        } while (bd != -1);
+
     }
 
   /*

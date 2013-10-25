@@ -80,9 +80,14 @@ public class RtfTemplate {
 
             reader = new InputStreamReader(bufferedStreamWrapper(inputStream), Rtf.CHARSET1252);
 
-            for (int c; (c = reader.read()) != -1; ) {
-                template.append((char) c);
-            }
+            int ch;
+            do {
+                ch = reader.read();
+                if (ch != -1) {
+                    template.append((char) ch);
+                }
+            } while (ch != -1);
+
         } catch (IOException e) {
             throw new RtfException(e);
         } finally {
