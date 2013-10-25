@@ -35,7 +35,11 @@ package com.tutego.jrtf;
  * Represents a RTF paragraph.
  */
 public abstract class RtfTextPara extends RtfPara {
-  /*
+    /**
+     * Error message for border style is missing
+     */
+    private static final String BORDER_STYLE_IS_MISSING_CAN_T_BE_NULL = "Border style is missing, can't be null";
+    /*
    * <textpar> := <pn>?
    *              <brdrdef>?
    *              <parfmt>*
@@ -453,7 +457,7 @@ public abstract class RtfTextPara extends RtfPara {
      */
     public RtfTextPara topBorder(BorderStyle borderStyle) {
         if (borderStyle == null) {
-            throw new IllegalArgumentException("Border style is missing, can't be null");
+            throw new IllegalArgumentException(BORDER_STYLE_IS_MISSING_CAN_T_BE_NULL);
         }
 
         brdrdef.append("\\brdrt").append(borderStyle);
@@ -468,7 +472,7 @@ public abstract class RtfTextPara extends RtfPara {
      */
     public RtfTextPara bottomBorder(BorderStyle borderStyle) {
         if (borderStyle == null) {
-            throw new IllegalArgumentException("Border style is missing, can't be null");
+            throw new IllegalArgumentException(BORDER_STYLE_IS_MISSING_CAN_T_BE_NULL);
         }
 
         brdrdef.append("\\brdrb").append(borderStyle);
@@ -525,7 +529,7 @@ public abstract class RtfTextPara extends RtfPara {
      */
     public RtfTextPara leftBorder(BorderStyle borderStyle) {
         if (borderStyle == null) {
-            throw new IllegalArgumentException("Border style is missing, can't be null");
+            throw new IllegalArgumentException(BORDER_STYLE_IS_MISSING_CAN_T_BE_NULL);
         }
 
         brdrdef.append("\\brdrl").append(borderStyle);
@@ -570,7 +574,7 @@ public abstract class RtfTextPara extends RtfPara {
      */
     public RtfTextPara rightBorder(BorderStyle borderStyle) {
         if (borderStyle == null) {
-            throw new IllegalArgumentException("Border style is missing, can't be null");
+            throw new IllegalArgumentException(BORDER_STYLE_IS_MISSING_CAN_T_BE_NULL);
         }
 
         brdrdef.append("\\brdrr").append(borderStyle);
