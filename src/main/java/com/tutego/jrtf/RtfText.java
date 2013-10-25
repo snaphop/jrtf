@@ -669,36 +669,7 @@ public class RtfText {
             throw new IllegalArgumentException("Field instructions are missing");
         }
 
-        return new RtfText(null) {
-            @Override
-            void rtf(Appendable out) throws IOException {
-        /*
-         * <field>     := '{' \field <fieldmod>? <fieldinst> <fieldrslt> '}'
-         * <fieldmod>  := \flddirty? & \fldedit? & \fldlock? & \fldpriv?
-         * <fieldinst> := '{\*' \fldinst <para>+ <fldalt>? '}'
-         * <fldalt>    := \fldalt
-         * <fieldrslt> := '{' \fldrslt <para>+ '}'
-         */
-
-                out.append("{\\field");
-
-                if (fieldModifier != null) {
-                    out.append(fieldModifier.toString());
-                }
-
-                out.append("{\\*\\fldinst ");
-                fieldInstructions.rtf(out, false);
-                out.append("}{\\fldrslt ");
-
-                if (recentResult != null) {
-                    recentResult.rtf(out, false);
-                }
-
-                out.append("}}");
-            }
-
-            ;
-        };
+        return new FieldAsRtfText(fieldModifier, fieldInstructions, recentResult);
     }
 
     // Fields
@@ -790,5 +761,47 @@ public class RtfText {
                 return "\\fldpriv";
             }
         }
+    }
+
+    private static class FieldAsRtfText extends RtfText {
+        private final FieldModifier fieldModifier;
+        private final RtfPara fieldInstructions;
+        private final RtfPara recentResult;
+
+        public FieldAsRtfText(FieldModifier fieldModifier, RtfPara fieldInstructions, RtfPara recentResult) {
+            super(null);
+            this.fieldModifier = fieldModifier;
+            this.fieldInstructions = fieldInstructions;
+            this.recentResult = recentResult;
+        }
+
+        @Override
+        void rtf(Appendable out) throws IOException {
+    /*
+     * <field>     := '{' \field <fieldmod>? <fieldinst> <fieldrslt> '}'
+     * <fieldmod>  := \flddirty? & \fldedit? & \fldlock? & \fldpriv?
+     * <fieldinst> := '{\*' \fldinst <para>+ <fldalt>? '}'
+     * <fldalt>    := \fldalt
+     * <fieldrslt> := '{' \fldrslt <para>+ '}'
+     */
+
+            out.append("{\\field");
+
+            if (fieldModifier != null) {
+                out.append(fieldModifier.toString());
+            }
+
+            out.append("{\\*\\fldinst ");
+            fieldInstructions.rtf(out, false);
+            out.append("}{\\fldrslt ");
+
+            if (recentResult != null) {
+                recentResult.rtf(out, false);
+            }
+
+            out.append("}}");
+        }
+
+
     }
 }
