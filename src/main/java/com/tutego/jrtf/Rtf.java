@@ -356,63 +356,12 @@ public final class Rtf {
      */
 
         // Write <header>
-
-    /*
-     * <header>   := \rtf
-     *               <charset>
-     *               <deffont>
-     *               \deff?
-     *               <fonttbl>
-     *               <filetbl>?
-     *               <colortbl>?
-     *               <stylesheet>?
-     *               <listtables>?
-     *               <revtbl>?
-     *               <rsidtable>?
-     *               <generator>?
-     */
-
-        out.append("{");   // '{' <header> <document>'}'
-
-        // The RTF version will always be 1 and the
-        // character is \ansi = Windows 1252
-
-        out.append("\\rtf1\\ansi\\deff0");
-
-    /*
-     * <fonttbl>  := '{' \fonttbl (<fontinfo> | ('{' <fontinfo> '}'))+ '}'
-     */
-        out.append("\n{\\fonttbl");
-
-        if (headerFonts.isEmpty()) {
-            out.append("{\\f0 Times New Roman;}");
-        } else {
-            for (RtfHeaderFont font : headerFonts) {
-                font.writeFontInfo(out);
-            }
-        }
-
-        out.append('}');
+        writeHeader(out);
 
     /*
      * <colortbl> := '{' \colortbl <colordef>+ '}'
      */
-        if (!headerColors.isEmpty()) {
-            out.append("\n{\\colortbl");
-
-            int maxColorIndex = headerColors.lastKey().intValue();
-
-            for (int i = 0; i <= maxColorIndex; i++) {
-                RtfHeaderColor color = headerColors.get(i);
-                if (color == null) {
-                    out.append(';');
-                } else {
-                    color.writeColordef(out);
-                }
-            }
-
-            out.append('}');
-        }
+        writeColorTbl(out);
 
     /*
      * <stylesheet> := '{' \ stylesheet <style>+ '}'
@@ -486,5 +435,63 @@ public final class Rtf {
         // We are done
 
         out.append("}");
+    }
+
+    private void writeColorTbl(Appendable out) throws IOException {
+        if (!headerColors.isEmpty()) {
+            out.append("\n{\\colortbl");
+
+            int maxColorIndex = headerColors.lastKey().intValue();
+
+            for (int i = 0; i <= maxColorIndex; i++) {
+                RtfHeaderColor color = headerColors.get(i);
+                if (color == null) {
+                    out.append(';');
+                } else {
+                    color.writeColordef(out);
+                }
+            }
+
+            out.append('}');
+        }
+    }
+
+    private void writeHeader(Appendable out) throws IOException {
+    /*
+     * <header>   := \rtf
+     *               <charset>
+     *               <deffont>
+     *               \deff?
+     *               <fonttbl>
+     *               <filetbl>?
+     *               <colortbl>?
+     *               <stylesheet>?
+     *               <listtables>?
+     *               <revtbl>?
+     *               <rsidtable>?
+     *               <generator>?
+     */
+
+        out.append("{");   // '{' <header> <document>'}'
+
+        // The RTF version will always be 1 and the
+        // character is \ansi = Windows 1252
+
+        out.append("\\rtf1\\ansi\\deff0");
+
+    /*
+     * <fonttbl>  := '{' \fonttbl (<fontinfo> | ('{' <fontinfo> '}'))+ '}'
+     */
+        out.append("\n{\\fonttbl");
+
+        if (headerFonts.isEmpty()) {
+            out.append("{\\f0 Times New Roman;}");
+        } else {
+            for (RtfHeaderFont font : headerFonts) {
+                font.writeFontInfo(out);
+            }
+        }
+
+        out.append('}');
     }
 }
