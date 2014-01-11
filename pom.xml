@@ -4,15 +4,15 @@
 
     <groupId>com.tutego</groupId>
     <artifactId>jrtf</artifactId>
-    <version>0.9-SNAPSHOT</version>
+    <version>0.9-snaphop-1</version>
     <packaging>jar</packaging>
 
     <name>jrtf</name>
-    <url>https://github.com/Manjago/jrtf</url>
+    <url>https://github.com/snaphop/jrtf</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.compiler.version>1.5</java.compiler.version>
+        <java.compiler.version>1.6</java.compiler.version>
     </properties>
 
     <build>
@@ -21,12 +21,10 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                    <encoding>UTF-8</encoding>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                     <source>${java.compiler.version}</source>
                     <target>${java.compiler.version}</target>
-                    <fork>true</fork>
                     <compilerVersion>${java.compiler.version}</compilerVersion>
-                    <executable>${jdk}/bin/javac</executable>
                     <verbose>true</verbose>
                 </configuration>
             </plugin>
@@ -50,24 +48,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>internal</id>
-            <name>Internal repository</name>
-            <url>dav:http://ci.quorum.ru:8085/artifactory/internal</url>
-        </repository>
-        <snapshotRepository>
-            <id>internal-snapshots</id>
-            <name>Internal snapshots repository</name>
-            <url>dav:http://ci.quorum.ru:8085/artifactory/internal-snapshots</url>
-        </snapshotRepository>
-        <site>
-            <id>site</id>
-            <name>Project Site</name>
-            <url>${site.root.url}\${project.artifactId}</url>
-        </site>
-    </distributionManagement>
 
 
 </project>
